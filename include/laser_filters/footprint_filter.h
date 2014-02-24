@@ -62,6 +62,10 @@ public:
 
   bool configure()
   {
+    if(!getParam("target_frame", target_frame_))
+    {
+      target_frame_ = "base_link";
+    }
     if(!getParam("inscribed_radius", inscribed_radius_))
     {
       ROS_ERROR("LaserScanFootprintFilter needs inscribed_radius to be set");
@@ -80,8 +84,9 @@ public:
     filtered_scan = input_scan ;
     sensor_msgs::PointCloud laser_cloud;
 
-    try{
-      projector_.transformLaserScanToPointCloud("base_link", input_scan, laser_cloud, tf_);
+    try
+    {
+      projector_.transformLaserScanToPointCloud(target_frame_, input_scan, laser_cloud, tf_);
     }
     catch(tf::TransformException& ex){
       if(up_and_running_){
@@ -136,6 +141,7 @@ private:
   laser_geometry::LaserProjection projector_;
   double inscribed_radius_;
   bool up_and_running_;
+  std::string target_frame_;
 } ;
 
 }

@@ -113,10 +113,15 @@ public:
   void callback(const sensor_msgs::LaserScan::ConstPtr& msg_in)
   {
     // Run the filter chain
-    filter_chain_.update (*msg_in, msg_);
-    
-    // Publish the output
-    output_pub_.publish(msg_);
+    if(filter_chain_.update (*msg_in,msg_))
+    {
+        // Publish the output
+        output_pub_.publish(msg_);
+    }
+    else
+    {
+        ROS_ERROR("Applying the filter was not sucessfull, skipping this scan.");
+    }
   }
 };
 
